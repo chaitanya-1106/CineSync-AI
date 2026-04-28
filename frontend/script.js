@@ -114,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <span class="movie-rating">★ ${m.rating}</span>
                 </div>
-                <div class="movie-genres">
-                    ${(m.genres || []).map(g => `<span class="genre-chip">${g}</span>`).join('')}
+                <div class="movie-desc">${m.overview || 'No synopsis available.'}</div>
+                <div class="movie-genre-tags">
+                    ${(m.genres || []).map(g => `<span class="movie-genre-pill">${g}</span>`).join('')}
                 </div>
-                <div class="movie-overview">${m.overview}</div>
             </div>`;
         }).join('');
     }
