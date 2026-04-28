@@ -61,6 +61,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ── Load metrics + recent films on startup ────────── */
     fetchMetrics();
+    /* ── Movie Search Functionality ──────────────────────── */
+    const searchBtn = document.getElementById('movie-search-btn');
+    const searchInput = document.getElementById('movie-search-input');
+    const searchResults = document.getElementById('movie-search-results');
+
+    searchBtn.addEventListener('click', async () => {
+        const query = searchInput.value.trim();
+        if (!query) return;
+        
+        searchBtn.disabled = true;
+        searchBtn.textContent = 'Searching...';
+        searchResults.innerHTML = `<div class="empty-state centered"><p>Scanning film archives...</p></div>`;
+        
+        try {
+            const res = await fetch(`/api/search?title=${encodeURIComponent(query)}`);
+            if (!res.ok) throw new Error('Search lookup failed');
+            const data = await res.json();
+            
+            renderSearchResults(data.recommendations || []);
+        } catch (err) {
+            console.error(err);
+            searchResults.innerHTML = `<div class="empty-state centered"><p style="color:var(--error)">❌ Error: ${err.message}</p></div>`;
+        } finally {
+            searchBtn.disabled = false;
+            searchBtn.textContent = 'Search';
+        }
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            searchBtn.click();
+        }
+    });
+
+    function renderSearchResults(movies) {
+        if (!movies || movies.length === 0) {
+            searchResults.innerHTML = `<div class="empty-state centered"><span class="empty-icon">🎞️</span><p>No matching films discovered.</p></div>`;
+            return;
+        }
+        searchResults.innerHTML = movies.map((m, i) => {
+            const posterHtml = m.poster
+                ? `<div class="movie-poster-wrap"><img class="movie-poster" src="${m.poster}" alt="${m.title} poster" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\'poster-fallback\'><span>🎬</span><span>No Poster</span></div>'"></div>`
+                : `<div class="poster-fallback"><span>🎬</span><span>No Poster</span></div>`;
+            return `
+            <div class="movie-card" style="animation-delay:${i * 60}ms">
+                ${posterHtml}
+                <div class="movie-title-row">
+                    <div>
+                        <div class="movie-title">${m.title}</div>
+                        ${m.year ? `<div class="movie-year">${m.year}</div>` : ''}
+                    </div>
+                    <span class="movie-rating">★ ${m.rating}</span>
+                </div>
+                <div class="movie-genres">
+                    ${(m.genres || []).map(g => `<span class="genre-chip">${g}</span>`).join('')}
+                </div>
+                <div class="movie-overview">${m.overview}</div>
+            </div>`;
+        }).join('');
+    }
+
     fetchRecentFilms();
 
     /* ── Form submission ───────────────────────────────── */

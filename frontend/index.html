@@ -20,6 +20,7 @@
         <ul class="nav-links" id="nav-links">
             <li><a href="#home"      class="nav-link active" data-section="home">Home</a></li>
             <li><a href="#predict"   class="nav-link"        data-section="predict">Predict</a></li>
+            <li><a href="#movie-search" class="nav-link"        data-section="movie-search">Search</a></li>
             <li><a href="#recommend" class="nav-link"        data-section="recommend">Recommend</a></li>
             <li><a href="#recent"    class="nav-link"        data-section="recent">Recent Films</a></li>
             <li><a href="#metrics"   class="nav-link"        data-section="metrics">Metrics</a></li>
@@ -95,6 +96,26 @@
                         <span class="empty-icon">🎯</span>
                         <p>Your genre predictions will appear here.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── SECTION 2.5 : MOVIE SEARCH ────────────────────── -->
+    <section id="movie-search" class="section search-section">
+        <div class="section-header">
+            <h2 class="section-title">🔍 Movie Lookup</h2>
+            <p class="section-subtitle">Search for any movie by its title to discover overview parameters and ratings.</p>
+        </div>
+        <div class="search-layout glass-card">
+            <div class="search-bar-container">
+                <input type="text" id="movie-search-input" class="search-input" placeholder="e.g. Interstellar, Inception, Jawan..." style="width: 100%; padding: 12px 20px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-1); outline: none; font-size: 1rem;" />
+                <button id="movie-search-btn" class="btn-primary" style="margin-top: 12px;">Search</button>
+            </div>
+            <div id="movie-search-results" class="recs-grid" style="margin-top: 30px;">
+                <div class="empty-state centered">
+                    <span class="empty-icon">🍿</span>
+                    <p>Search results will populate here.</p>
                 </div>
             </div>
         </div>

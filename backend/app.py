@@ -288,6 +288,41 @@ def recommend_movies(req: RecommendationRequest):
     return RecommendationResponse(recommendations=recs)
 
 
+@app.get("/api/search", response_model=RecommendationResponse)
+async def search_movie(title: str):
+    """
+    Search for movies by title in the local dataset.
+    """
+    if movies_df.empty:
+        return RecommendationResponse(recommendations=[])
+        
+    query = title.strip().lower()
+    if not query:
+        return RecommendationResponse(recommendations=[])
+        
+    # Partial matching
+    matches = movies_df[movies_df['title'].str.lower().str.contains(query, na=False)].head(12)
+    
+    recs = []
+    for _, row in matches.iterrows():
+        poster_path = ""
+        if 'poster_path' in row and pd.notna(row.get('poster_path')):
+            raw = str(row['poster_path']).strip()
+            if raw and raw != 'nan':
+                poster_path = TMDB_IMG + (raw if raw.startswith('/') else '/' + raw)
+                
+        recs.append({
+            "title": str(row['title']),
+            "year": str(row['year']) if pd.notna(row['year']) else "",
+            "overview": str(row['overview']) if pd.notna(row['overview']) else "",
+            "genres": row['genres_parsed'],
+            "rating": round(float(row['vote_average']), 1),
+            "poster": poster_path
+        })
+        
+    return RecommendationResponse(recommendations=recs)
+
+
 @app.get("/api/recent-films", response_model=RecentFilmsResponse)
 async def recent_films():
     """
